@@ -1,3 +1,145 @@
+/* https://codepen.io/kevinpowell/pres/GRVoWOe */
+@layer layout, reset;
+
+:root {
+  --font-family-base: system-ui;
+  --font-family-base-line-height: 1.6;
+  --font-family-heading: system-ui;
+  --font-family-heading-line-height: 1.1;
+  --font-family-code: monospace;
+  --body-max-width: 75ch;
+}
+
+@layer layout {
+
+  .flow > * + * {
+    margin-block-start: var(--flow-space, 1em);    
+  }
+
+  .grid-flow {
+    display: grid;
+    gap: var(--grid-flow-gap, 1rem);
+    justify-items: start;
+
+    > * {
+      margin: 0;
+    }
+  }
+
+  .grid-auto-fit {
+    --grid-auto-fit-min-column-size: 200px;
+    --grid-auto-fit-gap: 1rem;
+
+    display: grid;
+    gap: var(--grid-auto-fit-gap);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--grid-auto-fit-min-column-size), 100%), 1fr)
+    );
+  }
+
+  /* https://layout-breakouts-builder.vercel.app/ */
+  .page-layout > *,
+  .full-width > * {
+    grid-column: content;
+  }
+  .page-layout,
+  .full-width {
+    --minimum-content-padding: 1rem;
+
+    /** TRACK WIDTHS **/
+    --full-max-width: 1fr;
+    --popout-max-width: 1400px;
+    --content-max-width: 1060px;
+    --inset-content-max-width: 840px;
+
+    /** TRACK SIZES **/
+    --full: minmax(var(--minimum-content-padding), 1fr);
+    --popout: minmax(
+      0,
+      calc((var(--popout-max-width) - var(--content-max-width)) * 0.5)
+    );
+    --content: minmax(
+      0,
+      calc((var(--content-max-width) - var(--inset-content-max-width)) * 0.5)
+    );
+    --inset-content: min(
+      var(--inset-content-max-width),
+      100% - var(--minimum-content-padding) * 2
+    );
+
+    display: grid;
+    grid-template-columns:
+      [full-start]
+      var(--full)
+      [popout-start]
+      var(--popout)
+      [content-start]
+      var(--content)
+      [inset-content-start]
+      var(--inset-content)
+      [inset-content-end]
+      var(--content)
+      [content-end]
+      var(--popout)
+      [popout-end]
+      var(--full)
+      [full-end];
+  }
+
+  /** CLASSES **/
+  .full {
+    grid-column: full;
+  }
+  .full-start {
+    grid-column-start: full-start;
+  }
+  .full-end {
+    grid-column-end: full-end;
+  }
+
+  .popout {
+    grid-column: popout;
+  }
+  .popout-start {
+    grid-column-start: popout-start;
+  }
+  .popout-end {
+    grid-column-end: popout-end;
+  }
+
+  .content {
+    grid-column: content;
+  }
+  .content-start {
+    grid-column-start: content-start;
+  }
+  .content-end {
+    grid-column-end: content-end;
+  }
+
+  .inset-content {
+    grid-column: inset-content;
+  }
+  .inset-content-start {
+    grid-column-start: inset-content-start;
+  }
+  .inset-content-end {
+    grid-column-end: inset-content-end;
+  }
+
+  .full-width {
+    grid-column: full;
+  }
+  .full-content,
+  .full-content-nopad {
+    grid-column: full;
+  }
+  .full-content {
+    padding-inline: var(--minimum-content-padding);
+  }
+}
+
 @layer reset {
   *,
   *::before,
@@ -9,10 +151,13 @@
     -moz-text-size-adjust: none;
     -webkit-text-size-adjust: none;
     text-size-adjust: none;
+    font-family: var(--font-family-base);
     /* color-scheme: light dark; */
+    interpolate-size: allow-keywords;
   }
 
   :target {
+    scroll-margin-block: 32px;
     scroll-margin-block: 4rlh;
   }
 
@@ -25,7 +170,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    line-height: 1.6;
+    line-height: var(--font-family-base-line-height);
   }
 
   :first-child {
@@ -50,6 +195,12 @@
     padding: 0;
   }
 
+  td,
+  math,
+  time[datetime*=":"] {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
   h1,
   h2,
   h3,
@@ -57,7 +208,7 @@
   button,
   input,
   label {
-    line-height: 1.1;
+    line-height: var(--font-family-heading-line-height);
   }
 
   h1,
@@ -65,12 +216,14 @@
   h3,
   h4 {
     text-wrap: balance;
+    font-family: var(--font-family-heading);
   }
 
   p,
   li,
   figcaption {
     text-wrap: pretty;
+    max-width: var(--body-max-width);
   }
 
   img,
@@ -95,3 +248,7 @@
     cursor: pointer;
   }
 }
+
+/* * {
+  overscroll-behavior: contain;
+} */
